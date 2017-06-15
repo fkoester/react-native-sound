@@ -41,13 +41,21 @@ public class RNSoundModule extends ReactContextBaseJavaModule {
       WritableMap e = Arguments.createMap();
       e.putInt("code", -1);
       e.putString("message", "resource not found");
-      callback.invoke(e);
+      try {
+        callback.invoke(e);
+      } catch(RuntimeException runtimeException) {
+        Log.e("RNSoundModule", "Exception", runtimeException);
+      }
       return;
     }
     this.playerPool.put(key, player);
     WritableMap props = Arguments.createMap();
     props.putDouble("duration", player.getDuration() * .001);
-    callback.invoke(NULL, props);
+    try {
+      callback.invoke(NULL, props);
+    } catch(RuntimeException runtimeException) {
+      Log.e("RNSoundModule", "Exception", runtimeException);
+    }
   }
 
   protected MediaPlayer createMediaPlayer(final String fileName) {
@@ -80,7 +88,11 @@ public class RNSoundModule extends ReactContextBaseJavaModule {
   public void play(final Integer key, final Callback callback) {
     MediaPlayer player = this.playerPool.get(key);
     if (player == null) {
-      callback.invoke(false);
+      try {
+        callback.invoke(false);
+      } catch(RuntimeException runtimeException) {
+        Log.e("RNSoundModule", "Exception", runtimeException);
+      }
       return;
     }
     if (player.isPlaying()) {
@@ -94,7 +106,11 @@ public class RNSoundModule extends ReactContextBaseJavaModule {
         if (!mp.isLooping()) {
           if (callbackWasCalled) return;
           callbackWasCalled = true;
-          callback.invoke(true);
+          try {
+            callback.invoke(true);
+          } catch(RuntimeException runtimeException) {
+            Log.e("RNSoundModule", "Exception", runtimeException);
+          }
         }
       }
     });
@@ -105,7 +121,11 @@ public class RNSoundModule extends ReactContextBaseJavaModule {
       public synchronized boolean onError(MediaPlayer mp, int what, int extra) {
         if (callbackWasCalled) return true;
         callbackWasCalled = true;
-        callback.invoke(false);
+        try {
+          callback.invoke(false);
+        } catch(RuntimeException runtimeException) {
+          Log.e("RNSoundModule", "Exception", runtimeException);
+        }
         return true;
       }
     });
@@ -174,10 +194,18 @@ public class RNSoundModule extends ReactContextBaseJavaModule {
   public void getCurrentTime(final Integer key, final Callback callback) {
     MediaPlayer player = this.playerPool.get(key);
     if (player == null) {
-      callback.invoke(-1, false);
+      try {
+        callback.invoke(-1, false);
+      } catch(RuntimeException runtimeException) {
+        Log.e("RNSoundModule", "Exception", runtimeException);
+      }
       return;
     }
-    callback.invoke(player.getCurrentPosition() * .001, player.isPlaying());
+    try {
+      callback.invoke(player.getCurrentPosition() * .001, player.isPlaying());
+    } catch(RuntimeException runtimeException) {
+      Log.e("RNSoundModule", "Exception", runtimeException);
+    }
   }
 
   @ReactMethod
